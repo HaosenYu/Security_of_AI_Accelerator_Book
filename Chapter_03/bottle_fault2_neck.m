@@ -1,0 +1,29 @@
+function output_feature=bottle_fault2_neck(input_feature,padding1,padding2,...
+    kernel1,kernel2,kernel3,bias1,bias2,bias3,mean1,var1,scale1,offset1,...
+    mean2,var2,scale2,offset2,mean3,var3,scale3,offset3,threshold,...
+    error_matrix_im,error_matrix_un,col_num1,col_num2,row_num1,row_num2)
+
+    conv1_feature=pointwise_fault2_conv(kernel1,input_feature,bias1,padding1,...
+                  error_matrix_im,error_matrix_un,col_num1,col_num2,row_num1,row_num2);
+
+    batch1_feature=batch_fault2_normal(conv1_feature,mean1,var1,scale1,offset1,...
+                   error_matrix_im,error_matrix_un,col_num1,col_num2,row_num1,row_num2);
+
+    act1_feature=clip_relu(batch1_feature,threshold);
+    
+    conv2_feature=depth_fault2_conv(kernel2,act1_feature,bias2,padding2,...
+                  error_matrix_im,error_matrix_un,col_num1,col_num2,row_num1,row_num2);
+
+    batch2_feature=batch_fault2_normal(conv2_feature,mean2,var2,scale2,offset2,...
+                   error_matrix_im,error_matrix_un,col_num1,col_num2,row_num1,row_num2);
+
+    act2_feature=clip_relu(batch2_feature,threshold);  
+    
+    conv3_feature=pointwise_fault2_conv(kernel3,act2_feature,bias3,padding1,...
+                  error_matrix_im,error_matrix_un,col_num1,col_num2,row_num1,row_num2);
+
+    batch3_feature=batch_fault2_normal(conv3_feature,mean3,var3,scale3,offset3,...
+                   error_matrix_im,error_matrix_un,col_num1,col_num2,row_num1,row_num2);
+
+    output_feature=batch3_feature;
+end
